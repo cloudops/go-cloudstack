@@ -300,7 +300,19 @@ func (cs *CloudStackClient) newRequest(api string, params url.Values) (json.RawM
 	params.Set("apiKey", cs.apiKey)
 	params.Set("command", api)
 	params.Set("response", "json")
+	var b json.RawMessage
+	var err error
+	for i := 0; i < 5; i++ {
+		b, err = doApiCall(cs, api, params)
+		if err == nil {
+			break
+		}
+		time.Sleep(time.Second * 1)
+	}
+	return b, err
+}
 
+func doApiCall(cs *CloudStackClient, api string, params url.Values) (json.RawMessage, error) {
 	// Generate signature for API call
 	// * Serialize parameters, URL encoding only values and sort them by key, done by encodeValues
 	// * Convert the entire argument string to lowercase
