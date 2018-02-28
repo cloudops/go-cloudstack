@@ -307,7 +307,9 @@ func (cs *CloudStackClient) newRequest(api string, params url.Values) (json.RawM
 		if err == nil {
 			break
 		}
-		time.Sleep(time.Second * 1)
+		fmt.Printf("Params: %v\n", params)
+		fmt.Printf("API call attempt %d failed : %s\n", i+1, err)
+		time.Sleep(time.Millisecond * 1250)
 	}
 	return b, err
 }
